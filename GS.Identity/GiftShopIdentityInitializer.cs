@@ -1,8 +1,8 @@
 ﻿using GS.Identity.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace GS.Identity
 {
@@ -19,7 +19,37 @@ namespace GS.Identity
             _context = context;
         }
 
+        public async Task Run(string adminEmail)
+        {
+            if (_context.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+            {
+                await _context.Database.MigrateAsync();
+            }
 
+            if (!await _roleManager.RoleExistsAsync(Role.Admin))
+            {
+                await _roleManager.CreateAsync(new Role { Name = Role.Admin });
+            }
+
+            if (await _userManager.FindByEmailAsync(adminEmail) == null)
+            {
+                var user = new ApplicationUser
+                {
+#if DEBUG
+                    Id = Guid.Parse("c31de770-af00-442b-be2e-bd6e5dffde03"),
+#endif
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    EmailConfirmed = true
+                };
+
+                var identityResult = await _userManager.CreateAsync(user, "P@ssw0rd");
+                if (identityResult.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, Role.Admin);
+                }
+            }
+        }
 
 
 
