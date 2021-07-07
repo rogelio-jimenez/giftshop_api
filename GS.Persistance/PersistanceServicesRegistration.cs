@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using GS.Persistance.Contexts;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GS.Persistance
 {
@@ -10,7 +9,9 @@ namespace GS.Persistance
     {
         public static IServiceCollection AddPersitanceServices(this IServiceCollection services, IConfiguration configuration)
         {
-
+            services.AddDbContext<GiftShopDBContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("AppConnection"))
+            );
             return services;
         }
     }

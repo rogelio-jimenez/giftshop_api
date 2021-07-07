@@ -6,15 +6,15 @@ using System.Text;
 
 namespace GS.Domain.Entities
 {
-    public class CartItem : IHaveUserCreated, IHaveDateCreated
+    public class CartItem : Entity, IHaveUserCreated, IHaveDateCreated
     {
         public Guid ProductId { get; set; }
         public virtual Product Product { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
+        //[Column(TypeName = "decimal(10,2)")]
         public decimal UnitPrice { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
+        //[Column(TypeName = "decimal(10,2)")]
         public decimal TotalPrice { get; set; }
 
         public int Quantity { get; set; }

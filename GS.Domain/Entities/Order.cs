@@ -9,6 +9,7 @@ namespace GS.Domain.Entities
     {
         public Guid CreatedBy { get; set; }
         public DateTime DateCreated { get; set; }
+        public decimal Total { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }
 
     }

@@ -11,10 +11,10 @@ namespace GS.Domain.Entities
         public Guid OrderId { get; set; }
         public virtual Order Order { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
+        //[Column(TypeName = "decimal(10,2)")]
         public decimal UnitPrice { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
+        //[Column(TypeName = "decimal(10,2)")]
         public decimal TotalPrice { get; set; }
         public int Quantity { get; set; }
         public Guid ProductId { get; set; }
