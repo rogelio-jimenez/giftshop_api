@@ -10,15 +10,10 @@ namespace GS.Domain.Entities
     {
         public Guid ProductId { get; set; }
         public virtual Product Product { get; set; }
-
-        //[Column(TypeName = "decimal(10,2)")]
         public decimal UnitPrice { get; set; }
-
-        //[Column(TypeName = "decimal(10,2)")]
         public decimal TotalPrice { get; set; }
-
         public int Quantity { get; set; }
-        public Guid CreatedBy { get; set; }
+        public Guid UserId { get; set; }
         public DateTime DateCreated { get; set; }
     }
 }

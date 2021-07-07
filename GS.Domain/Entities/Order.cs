@@ -7,7 +7,7 @@ namespace GS.Domain.Entities
 {
     public class Order : Entity, IHaveUserCreated, IHaveDateCreated
     {
-        public Guid CreatedBy { get; set; }
+        public Guid UserId { get; set; }
         public DateTime DateCreated { get; set; }
         public decimal Total { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }

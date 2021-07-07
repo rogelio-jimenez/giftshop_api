@@ -19,7 +19,7 @@ namespace GS.Domain.Entities
         public int Quantity { get; set; }
         public Guid ProductId { get; set; }
         public virtual Product Product { get; set; }
-        public Guid CreatedBy { get; set; }
+        public Guid UserId { get; set; }
         public DateTime DateCreated { get; set; }
     }
 }

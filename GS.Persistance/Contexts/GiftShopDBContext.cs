@@ -38,7 +38,10 @@ namespace GS.Persistance.Contexts
             new CartItemConfiguration(modelBuilder.Entity<CartItem>());
             new ProductWishListConfiguration(modelBuilder.Entity<ProductWishList>());
 
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            var entities = modelBuilder.Model.GetEntityTypes();
+            var entityProperties = modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetProperties());
+
+            foreach (var entity in entities)
             {
                 var type = entity.ClrType;
                 if (type.GetInterfaces().Any(i => IsClosedTypeOf(i, typeof(IStatus<>))))
@@ -47,22 +50,19 @@ namespace GS.Persistance.Contexts
                 }
             }
 
-            foreach (var property in modelBuilder.Model.GetEntityTypes()
-                        .SelectMany(t => t.GetProperties())
-                        .Where(p => p.ClrType == typeof(decimal)))
+            foreach (var property in entityProperties)
             {
-                property.SetColumnType("decimal(10, 2)");
-            }
+                var propType = property.ClrType;
+                if (propType == typeof(decimal))
+                {
+                    property.SetColumnType("decimal(10, 2)");
+                }
 
-            foreach(var property in modelBuilder.Model.GetEntityTypes()
-                .SelectMany(t => t.GetProperties())
-                .Where(p => p.ClrType == typeof(IHaveUserCreated))
-            )
-            {
-                property.SetAnnotation("Required", true);
+                if(propType == typeof(IHaveUserCreated))
+                {
+                    property.SetAnnotation("Required", true);
+                }
             }
-                
-
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

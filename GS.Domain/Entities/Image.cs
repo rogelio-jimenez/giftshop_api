@@ -9,9 +9,9 @@ namespace GS.Domain.Entities
         public string Name { get; set; }
         public string Url { get; set; }
         public Guid ProductId { get; set; }
-        public Product Product { get; set; }
-        public Guid CreatedBy { get; set; }
-        public Guid? UpdatedBy { get; set; }
+        public virtual Product Product { get; set; }
+        public Guid UserId { get; set; }
+        public Guid? UpdatedById { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
         public EnabledStatus Status { get; set; }

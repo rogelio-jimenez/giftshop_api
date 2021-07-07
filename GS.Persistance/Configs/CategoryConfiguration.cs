@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GS.Persistance.Configs
 {
-    public class CategoryConfiguration
+    public sealed class CategoryConfiguration
     {
         public CategoryConfiguration(EntityTypeBuilder<Category> entityBulider)
         {
-            entityBulider.HasIndex(c => c.Name).IsClustered().IsUnique();
-            //entityBulider.Property(c => c.CreatedBy).IsRequired();
-            entityBulider.HasIndex(c => c.CreatedBy).IsClustered(false);
+            entityBulider.Property(c => c.Name).HasMaxLength(32).IsRequired();
+            entityBulider.Property(c => c.Description).HasMaxLength(64);
+            entityBulider.HasIndex(c => new { c.Name, c.Description }).IsUnique();
+            entityBulider.HasIndex(c => c.UserId);
         }
     }
 }

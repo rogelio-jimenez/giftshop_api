@@ -4,6 +4,6 @@ namespace GS.Domain.Models
 {
     public interface IHaveUserUpdate
     {
-        public Guid? UpdatedBy { get; set; }
+        public Guid? UpdatedById { get; set; }
     }
 }

@@ -7,6 +7,28 @@
   <ItemGroup>
     <Compile Remove="Migrations\20210707000118_InitialMigration.cs" />
     <Compile Remove="Migrations\20210707000118_InitialMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707155003_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707155003_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707164400_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707164400_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707165140_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707165140_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707165355_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707165355_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707165821_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707165821_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707170011_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707170011_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707170323_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707170323_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707172834_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707172834_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707173043_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707173043_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707173209_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707173209_InitialAppMigration.Designer.cs" />
+    <Compile Remove="Migrations\20210707173334_InitialAppMigration.cs" />
+    <Compile Remove="Migrations\20210707173334_InitialAppMigration.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,10 +38,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GS.Application\GS.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

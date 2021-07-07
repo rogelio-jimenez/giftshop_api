@@ -12,6 +12,9 @@ namespace GS.Persistance
             services.AddDbContext<GiftShopDBContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("AppConnection"))
             );
+
+            services.AddScoped<GiftShopDbContextInitializer>();
+
             return services;
         }
     }

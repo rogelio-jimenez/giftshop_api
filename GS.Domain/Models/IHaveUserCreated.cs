@@ -4,6 +4,6 @@ namespace GS.Domain.Models
 {
     public interface IHaveUserCreated
     {
-        public Guid CreatedBy { get; set; }
+        public Guid UserId { get; set; }
     }
 }
