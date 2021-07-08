@@ -3,17 +3,13 @@ using GS.Infrastructure;
 using GS.Persistance;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
+using GS.Application;
+using Microsoft.Net.Http.Headers;
 
 namespace GS.API
 {
@@ -33,6 +29,7 @@ namespace GS.API
         {
             AddSwagger(services);
 
+            services.AddApplicationServices();
             services.AddInfrastructureServices(Configuration);
             services.AddPersitanceServices(Configuration);
             services.AddIdentityServicesRegistration(Configuration);
@@ -51,6 +48,14 @@ namespace GS.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(builder =>
+                builder.AllowAnyHeader()
+                .WithExposedHeaders(HeaderNames.ContentDisposition)
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .WithOrigins(Configuration["ClientDomains"])
+            );
 
             app.UseHttpsRedirection();
 
@@ -105,7 +110,7 @@ namespace GS.API
                 sg.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "GloboTicket Ticket Management API"
+                    Title = "GiftShop API"
                 });
                 //sg.OperationFilter<FileResultContentTypeOperationFilter>();
             });

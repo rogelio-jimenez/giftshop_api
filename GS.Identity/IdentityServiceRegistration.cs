@@ -1,5 +1,7 @@
-﻿using GS.Application.Models.Authentication;
+﻿using GS.Application.Contracts.Identity;
+using GS.Application.Models.Authentication;
 using GS.Identity.Models;
+using GS.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace GS.Identity
@@ -18,28 +19,26 @@ namespace GS.Identity
     {
         public static IServiceCollection AddIdentityServicesRegistration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-
             services.AddDbContext<GiftShopIdentityDbContext>(options => 
                 options.UseSqlServer(configuration.GetConnectionString("Authentication"),
                 b => b.MigrationsAssembly(typeof(GiftShopIdentityDbContext).Assembly.FullName))
             );
 
-            services.AddIdentityCore<ApplicationUser>(options => {
+            services.AddIdentity<ApplicationUser, Role>(options => {
                 options.User.RequireUniqueEmail = true;
-                options.Password.RequiredLength = AuthConstants.MinPasswordLength;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireDigit = true;
+                options.Password.RequiredLength = AuthConstants.MinPasswordLength;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
             })
-            .AddRoles<Role>()
-            .AddSignInManager()
             .AddEntityFrameworkStores<GiftShopIdentityDbContext>()
             .AddDefaultTokenProviders();
 
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
             services.AddScoped<GiftShopIdentityInitializer>();
 
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

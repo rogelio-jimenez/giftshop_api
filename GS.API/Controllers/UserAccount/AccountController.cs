@@ -1,0 +1,36 @@
+﻿using GS.Application.Contracts;
+using GS.Application.Contracts.Identity;
+using GS.Application.Features.Authentication.Commands;
+using GS.Application.Models.Authentication;
+using GS.Identity.Models;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace GS.API.Controllers.UserAccount
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AccountController : ControllerBase
+    {
+        private readonly IMediator _mediator;
+
+        public AccountController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+        [HttpPost("authenticate")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticationRequest model)
+        {
+            return Ok(await _mediator.Send(new AuthenticateCommand { Email = model.Email, Password = model.Password }));
+        }
+
+    }
+}
