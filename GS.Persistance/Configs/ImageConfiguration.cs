@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GS.Persistance.Configs
 {
-    public sealed class ImageConfiguration
+    public sealed class ImageConfiguration : IEntityTypeConfiguration<Image>
     {
-        public ImageConfiguration(EntityTypeBuilder<Image> entityBuilder)
+        public void Configure(EntityTypeBuilder<Image> builder)
         {
-            entityBuilder.Property(i => i.ProductId).IsRequired();
-            entityBuilder.Property(i => i.Name).HasMaxLength(64).IsRequired();
-            entityBuilder.Property(i => i.LabelName).HasMaxLength(64).IsRequired();
-            entityBuilder.Property(i => i.Url).IsRequired();
+            builder.Property(i => i.ProductId).IsRequired();
+            builder.Property(i => i.Name).HasMaxLength(64).IsRequired();
+            builder.Property(i => i.LabelName).HasMaxLength(64).IsRequired();
+            builder.Property(i => i.Url).IsRequired();
 
-            entityBuilder.HasIndex(i => new { i.ProductId, i.Name, i.LabelName }).IsUnique();
-            entityBuilder.HasIndex(i => i.ProductId);
-            entityBuilder.HasIndex(i => new { i.UserId, i.LabelName });
+            builder.HasIndex(i => new { i.ProductId, i.Name, i.LabelName }).IsUnique();
+            builder.HasIndex(i => i.ProductId);
+            builder.HasIndex(i => new { i.UserId, i.LabelName });
         }
     }
 }

@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GS.Persistance.Configs
 {
-    public sealed class OrderConfiguration
+    public sealed class OrderConfiguration: IEntityTypeConfiguration<Order>
     {
-        public OrderConfiguration(EntityTypeBuilder<Order> entityBuilder)
+        public void Configure(EntityTypeBuilder<Order> builder)
         {
-            entityBuilder.Property(o => o.Total).IsRequired();
-            entityBuilder.HasIndex(o => o.UserId).IsClustered(false);
+            builder.Property(o => o.Total).IsRequired();
+            builder.HasIndex(o => o.UserId).IsClustered(false);
         }
     }
 }

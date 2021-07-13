@@ -4,15 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GS.Persistance.Configs
 {
-    public sealed class CartItemConfiguration
+    public sealed class CartItemConfiguration: IEntityTypeConfiguration<CartItem>
     {
-        public CartItemConfiguration(EntityTypeBuilder<CartItem> entityBuilder)
+        public void Configure(EntityTypeBuilder<CartItem> builder)
         {
-            entityBuilder.Property(ci => ci.ProductId).IsRequired();
-            entityBuilder.Property(ci => ci.UnitPrice).IsRequired();
-            entityBuilder.Property(ci => ci.TotalPrice).IsRequired();
-            entityBuilder.Property(ci => ci.Quantity).IsRequired();
-            //entityBuilder.HasIndex(ci => ci.ProductId).IsClustered(false);
+            builder.Property(ci => ci.ProductId).IsRequired();
+            builder.Property(ci => ci.UnitPrice).IsRequired();
+            builder.Property(ci => ci.TotalPrice).IsRequired();
+            builder.Property(ci => ci.Quantity).IsRequired();
         }
     }
 }

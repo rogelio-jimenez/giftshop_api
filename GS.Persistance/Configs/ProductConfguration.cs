@@ -4,17 +4,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GS.Persistance.Configs
 {
-    public sealed class ProductConfguration
+    public sealed class ProductConfguration: IEntityTypeConfiguration<Product>
     {
-        public ProductConfguration(EntityTypeBuilder<Product> entityBulider)
+        public void Configure(EntityTypeBuilder<Product> builder)
         {
-            entityBulider.Property(p => p.Price).IsRequired();
-            entityBulider.Property(p => p.Name).HasMaxLength(64).IsRequired();
-            entityBulider.Property(p => p.Description).HasMaxLength(200).IsRequired();
-            entityBulider.Property(p => p.CategoryId).IsRequired();
-            entityBulider.Property(p => p.UserId).IsRequired();
+            builder.Property(p => p.Price).IsRequired();
+            builder.Property(p => p.Name).HasMaxLength(64).IsRequired();
+            builder.Property(p => p.Description).HasMaxLength(200).IsRequired();
+            builder.Property(p => p.CategoryId).IsRequired();
+            builder.Property(p => p.UserId).IsRequired();
 
-            entityBulider.HasIndex(p => new { p.UserId, p.CategoryId }).IsClustered(false);
+            builder.HasIndex(p => new { p.UserId, p.CategoryId }).IsClustered(false);
         }
     }
 }

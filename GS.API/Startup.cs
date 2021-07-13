@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using GS.Application;
 using Microsoft.Net.Http.Headers;
+using GS.API.Extensions;
 
 namespace GS.API
 {
@@ -60,7 +61,6 @@ namespace GS.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseAuthentication();
             app.UseSwagger();
             app.UseSwaggerUI(ui =>
             {
@@ -68,7 +68,11 @@ namespace GS.API
             });
 
             app.UseCors(coorsName);
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            // custom http error handling
+            app.UseErrorHandlingMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

@@ -23,6 +23,7 @@ namespace GS.Persistance.Contexts
 
         public GiftShopDBContext(DbContextOptions<GiftShopDBContext> options) : base(options)
         {
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,13 +31,13 @@ namespace GS.Persistance.Contexts
             // Applies configuration from all IEntityTypeConfiguration<TEntity> /> instances that are defined in provided assembly.
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(GiftShopDBContext).Assembly);
 
-            new CategoryConfiguration(modelBuilder.Entity<Category>());
-            new ProductConfguration(modelBuilder.Entity<Product>());
-            new ImageConfiguration(modelBuilder.Entity<Image>());
-            new OrderConfiguration(modelBuilder.Entity<Order>());
-            new OrderItemConfiguration(modelBuilder.Entity<OrderItem>());
-            new CartItemConfiguration(modelBuilder.Entity<CartItem>());
-            new ProductWishListConfiguration(modelBuilder.Entity<ProductWishList>());
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfguration());
+            modelBuilder.ApplyConfiguration(new ImageConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new CartItemConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductWishListConfiguration());
 
             var entities = modelBuilder.Model.GetEntityTypes();
             var entityProperties = modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetProperties());

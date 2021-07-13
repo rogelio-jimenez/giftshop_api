@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Text;
 
 namespace GS.Identity
 {
@@ -39,7 +39,8 @@ namespace GS.Identity
                 throw new ArgumentNullException(nameof(identity));
             }
 
-            return GetValues(identity, ClaimTypes.Role);
+            //return GetValues(identity, ClaimTypes.Role);
+            return GetValues(identity, "roles");
         }
 
         public static Guid GetUserId(this IIdentity identity)
@@ -49,7 +50,8 @@ namespace GS.Identity
                 throw new ArgumentNullException(nameof(identity));
             }
 
-            var value = GetValue(identity, ClaimTypes.NameIdentifier);
+            //var value = GetValue(identity, ClaimTypes.Email);
+            var value = GetValue(identity, "uid");
             if (value != null)
             {
                 if (Guid.TryParse(value, out var userId))

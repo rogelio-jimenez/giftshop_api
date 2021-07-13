@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GS.Persistance.Configs
 {
-    public sealed class ProductWishListConfiguration
+    public sealed class ProductWishListConfiguration: IEntityTypeConfiguration<ProductWishList>
     {
-        public ProductWishListConfiguration(EntityTypeBuilder<ProductWishList> entityBuilder)
+        public void Configure(EntityTypeBuilder<ProductWishList> builder)
         {
-            entityBuilder.Property(pwl => pwl.ProductId).IsRequired();
-            entityBuilder.HasKey(pwl => new { pwl.ProductId, pwl.UserId });
+            builder.Property(pwl => pwl.ProductId).IsRequired();
+            builder.HasKey(pwl => new { pwl.ProductId, pwl.UserId });
         }
     }
 }
