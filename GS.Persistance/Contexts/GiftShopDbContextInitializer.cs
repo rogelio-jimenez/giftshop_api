@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GS.Application.Contracts;
+using GS.Persistance.Seeding;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GS.Persistance.Contexts
@@ -9,19 +9,42 @@ namespace GS.Persistance.Contexts
     public sealed class GiftShopDbContextInitializer
     {
         private readonly GiftShopDBContext _context;
+        private readonly IDateTime _dateTime;
 
-        public GiftShopDbContextInitializer(GiftShopDBContext context)
+        public GiftShopDbContextInitializer(GiftShopDBContext context, IDateTime dateTime)
         {
             _context = context;
+            this._dateTime = dateTime;
         }
 
-        public async Task Run()
+        private void CheckUserAdminId(Guid userAdminId)
         {
-            if(_context.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+            if (userAdminId == Guid.Empty)
             {
-                await _context.Database.MigrateAsync();
+                throw new ArgumentNullException(nameof(userAdminId));
             }
         }
 
+        public async Task Run(Guid userAdminId)
+        {
+            if (_context.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+            {
+                await _context.Database.MigrateAsync();
+            }
+
+            CheckUserAdminId(userAdminId);
+            await InitializeCategories(userAdminId);
+        }
+
+        private async Task InitializeCategories(Guid userAdminId)
+        {
+            var categories = new SeedCategory(userAdminId, _dateTime);
+
+            if (!await _context.Categories.AnyAsync())
+            {
+                await _context.Categories.AddRangeAsync(categories.Items);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

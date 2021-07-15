@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GS.Application.Features.Admin.Categories.Commands;
+using GS.Application.Models.Category;
 using GS.Domain.Entities;
 
 namespace GS.Application.Features.Admin.Categories
@@ -14,6 +15,10 @@ namespace GS.Application.Features.Admin.Categories
             _ = CreateMap<UpdateCategoryModel, Category>();
 
             _ = CreateMap<Category, AddCategoryModel>();
+
+            _ = CreateMap<Category, CategoryModel>();
+
+            _ = CreateMap<CategoryModel, Category>();
         }
     }
 }

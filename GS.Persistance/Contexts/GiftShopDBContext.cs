@@ -1,4 +1,5 @@
-﻿using GS.Domain.Entities;
+﻿using GS.Application.Contracts;
+using GS.Domain.Entities;
 using GS.Domain.Models;
 using GS.Persistance.Configs;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ namespace GS.Persistance.Contexts
 {
     public class GiftShopDBContext : DbContext
     {
+        private readonly IDateTime _dateTime;
+
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Image> Images { get; set; }
@@ -21,9 +24,10 @@ namespace GS.Persistance.Contexts
         public DbSet<ProductWishList> ProductWishList { get; set; }
 
 
-        public GiftShopDBContext(DbContextOptions<GiftShopDBContext> options) : base(options)
+        public GiftShopDBContext(DbContextOptions<GiftShopDBContext> options, IDateTime dateTime) : base(options)
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            this._dateTime = dateTime;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -91,19 +95,19 @@ namespace GS.Persistance.Contexts
             }
         }
 
-        private static void SetDateCreated(EntityEntry dbEntityEntry)
+        private void SetDateCreated(EntityEntry dbEntityEntry)
         {
             if (dbEntityEntry.Entity is IHaveDateCreated haveDateCreated)
             {
-                haveDateCreated.DateCreated = DateTime.Now;
+                haveDateCreated.DateCreated = _dateTime.Now;
             }
         }
 
-        private static void SetDateUpdated(EntityEntry dbEntityEntry)
+        private void SetDateUpdated(EntityEntry dbEntityEntry)
         {
             if (dbEntityEntry.Entity is IHaveDateUpdated haveDateUpdated)
             {
-                haveDateUpdated.DateUpdated = DateTime.Now;
+                haveDateUpdated.DateUpdated = _dateTime.Now;
             }
         }
 

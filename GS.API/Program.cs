@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Threading.Tasks;
 
 namespace GS.API
@@ -20,7 +21,9 @@ namespace GS.API
                 var cfg = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
                 await identityInitializer.Run(cfg["AdminMail"]);
-                await appDbContextInitializer.Run();
+
+                //ToDo: get the user id by email and pass to the following method...
+                await appDbContextInitializer.Run(Guid.Parse("c31de770-af00-442b-be2e-bd6e5dffde03"));
             }
 
             await host.RunAsync();

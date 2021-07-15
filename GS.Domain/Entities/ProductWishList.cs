@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GS.Domain.Entities
 {
-    public class ProductWishList : IHaveUserCreated, IHaveDateCreated
+    public class ProductWishList : Entity, IHaveUserCreated, IHaveDateCreated
     {
         public Guid ProductId { get; set; }
         public virtual Product Product { get; set; }
