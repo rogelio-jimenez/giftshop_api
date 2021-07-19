@@ -1,35 +1,40 @@
-﻿using GS.Application.Contracts.Repository;
+﻿using GS.Application.Contracts.Persistence;
 using GS.Application.Wrappers;
 using GS.Domain.Entities;
+using GS.Domain.Models;
 using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GS.Domain.Models;
-using System;
 
 namespace GS.Application.Features.Admin.Categories.Commands.Delete
 {
     public sealed class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Response<Guid>>
     {
-        private readonly IRepositoryAsync<Category> _repository;
+        private readonly IReadOnlyRepository _readOnluRepository;
+        private readonly IRepository _repository;
 
-        public DeleteCategoryCommandHandler(IRepositoryAsync<Category> repository)
+        public DeleteCategoryCommandHandler(IRepository repository, IReadOnlyRepository readOnluRepository)
         {
             _repository = repository;
+            _readOnluRepository = readOnluRepository;
         }
 
         public async Task<Response<Guid>> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.GetByIdAsync(request.Id);
+            //var entity = await _repository.GetByIdAsync(request.Id);
+            var entity = await _readOnluRepository.FirstAsync<Category>(c => c.Id.Equals(request.Id));
 
-            if( entity == null)
+            if (entity == null)
             {
                 throw new KeyNotFoundException($"Category with id: {request.Id} not found.");
             }
 
             entity.Status = EnabledStatus.Deleted;
-            await _repository.UpdateAsync(entity);
+            _repository.Update(entity);
+            await _repository.SaveChangesAsync();
+
             return new Response<Guid>(entity.Id);
         }
     }

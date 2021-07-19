@@ -1,59 +1,53 @@
-﻿using Ardalis.Specification;
-using AutoMapper;
-using GS.Application.Common.Extensions;
-using GS.Application.Common.Pagination;
-using GS.Application.Contracts.Pagination;
-using GS.Application.Contracts.Repository;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using GS.Application.Contracts.Persistence;
+using GS.Application.Infrastructure;
 using GS.Application.Models.Category;
+using GS.Application.Queries;
 using GS.Domain.Entities;
-using MediatR;
+using GS.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper.QueryableExtensions;
 
 namespace GS.Application.Features.Admin.Categories.Queries.GetPage
 {
-    public sealed class GetCategoryPageQueryHandler : IRequestHandler<GetCategoryPageQuery, IListResponseModel<CategoryModel>>
+    public sealed class GetCategoryPageQueryHandler : IQueryHandler<GetCategoryPageQuery, PaginatedResponse<CategoryModel>>
     {
-        private readonly IRepositoryAsync<Category> _repositoryAsync;
+        private readonly IReadOnlyRepository _readOnlyRepository;
         private readonly IMapper _mapper;
+        private readonly IPaginator _paginator;
 
-        public GetCategoryPageQueryHandler(IRepositoryAsync<Category> repositoryAsync, IMapper mapper)
+        public GetCategoryPageQueryHandler(IReadOnlyRepository readOnlyRepository, IMapper mapper, IPaginator paginator)
         {
-            _repositoryAsync = repositoryAsync;
+            _readOnlyRepository = readOnlyRepository;
             _mapper = mapper;
+            _paginator = paginator;
         }
 
-        public async Task<IListResponseModel<CategoryModel>> Handle(GetCategoryPageQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResponse<CategoryModel>> Handle(GetCategoryPageQuery request, CancellationToken cancellationToken)
         {
-            var query = await _repositoryAsync.ListAsync(new PagedCategorySpecification(request));
-            var categories = _mapper.Map<List<CategoryModel>>(query);
+            var query = _readOnlyRepository.Query<Category>(c => c.Status == EnabledStatus.Enabled);
 
-            var result = new ListResponseModel<CategoryModel>(request, query.Count, categories);
-            return result;
-        }
-    }
-
-    public class PagedCategorySpecification: Specification<Category>
-    {
-        public PagedCategorySpecification(GetCategoryPageQuery request)
-        {
-            Query.ApplyPaging(request.PageSize, request.PageIndex);
-
-            //if (!string.IsNullOrEmpty(request.OrderBy))
-            //{
-            //    Query.ApplyOrder(request.OrderBy);
-            //}
-
-            if (!string.IsNullOrEmpty(request.Filter))
+            if (!string.IsNullOrEmpty(request.SearchTerm))
             {
-                Query.Where(c => 
-                    c.Name.Trim().ToLower().Contains(request.Filter.ToLower())
-                    || c.Description.Trim().ToLower().Contains(request.Filter));
+                var term = request.SearchTerm.Trim().ToLower();
+                query = query.Where(
+                    c => c.Name.Trim().ToLower().Contains(term) || 
+                    c.Description.Trim().ToLower().Contains(term));
             }
+
+            var items = query
+                .ProjectTo<CategoryModel>(_mapper.ConfigurationProvider)
+                .OrderBy(!string.IsNullOrEmpty(request.OrderBy) ? request.OrderBy : "name");
+
+            var page = await _paginator.CreatePageAsync(_readOnlyRepository, query, items, 
+                request.Page, request.PageSize, cancellationToken);
+
+            return page;    
         }
     }
 }

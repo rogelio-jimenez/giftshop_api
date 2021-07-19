@@ -26,7 +26,7 @@ namespace GS.Persistance.Contexts
 
         public GiftShopDBContext(DbContextOptions<GiftShopDBContext> options, IDateTime dateTime) : base(options)
         {
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            //ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             this._dateTime = dateTime;
         }
 

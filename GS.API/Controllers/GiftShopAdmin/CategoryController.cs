@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using GS.Application.Common.Pagination;
 using GS.Application.Features.Admin.Categories.Commands;
 using GS.Application.Features.Admin.Categories.Commands.Add;
 using GS.Application.Features.Admin.Categories.Commands.Delete;
@@ -7,6 +6,7 @@ using GS.Application.Features.Admin.Categories.Commands.Edit;
 using GS.Application.Features.Admin.Categories.Queries.GetById;
 using GS.Application.Features.Admin.Categories.Queries.GetPage;
 using GS.Application.Models.Category;
+using GS.Application.Queries;
 using GS.Identity;
 using GS.Identity.Models;
 using MediatR;
@@ -39,7 +39,7 @@ namespace GS.API.Controllers.GiftShopAdmin
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(ListResponseModel<CategoryModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedResponse<CategoryModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPage([FromQuery] GetCategoryPageQuery query)
         {
             return Ok(await _mediator.Send(query));
