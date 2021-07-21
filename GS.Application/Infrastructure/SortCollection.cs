@@ -49,6 +49,10 @@ namespace GS.Application.Infrastructure
             {
                 direction = ListSortDirection.Descending;
                 name = name.Substring(1);
+            }else if(element.EndsWith(" desc"))
+            {
+                direction = ListSortDirection.Descending;
+                name = name.Substring(0, name.IndexOf(" ")).Trim();
             }
 
             // property name cased properly

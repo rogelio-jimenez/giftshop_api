@@ -9,7 +9,6 @@ namespace GS.Application.Features.Admin.Categories.Commands
 {
     public class UpdateCategoryModel: IHaveUserUpdate
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public Guid? UpdatedById { get; set; }

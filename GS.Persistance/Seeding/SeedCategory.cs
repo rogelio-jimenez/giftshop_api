@@ -14,14 +14,12 @@ namespace GS.Persistance.Seeding
     public class SeedCategory
     {
         private readonly Guid _userAdminId;
-        private readonly IDateTime _dateTime;
         public List<Category> Items { get; set; }
 
 
-        public SeedCategory(Guid userAdminId, IDateTime dateTime)
+        public SeedCategory(Guid userAdminId)
         {
             this._userAdminId = userAdminId;
-            this._dateTime = dateTime;
             this.Items = Categories;
         }
 

@@ -1,7 +1,6 @@
 ﻿using GS.Domain.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GS.Domain.Entities
 {
@@ -17,7 +16,7 @@ namespace GS.Domain.Entities
         public Guid? UpdatedById { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
-        public EnabledStatus Status { get; set ; }
+        public EnabledStatus Status { get; set; }
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<ProductWishList> ProductWishLists { get; set; }
     }

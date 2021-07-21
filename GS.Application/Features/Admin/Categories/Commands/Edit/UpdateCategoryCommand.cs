@@ -8,9 +8,11 @@ namespace GS.Application.Features.Admin.Categories.Commands.Edit
 {
     public class UpdateCategoryCommand : IRequest<Response<Guid>>
     {
+        public Guid Id { get; set; }
         public UpdateCategoryModel Category { get; set; }
-        public UpdateCategoryCommand(UpdateCategoryModel model)
+        public UpdateCategoryCommand(Guid id, UpdateCategoryModel model)
         {
+            Id = id;
             Category = model;
         }
     }

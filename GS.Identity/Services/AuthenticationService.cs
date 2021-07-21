@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,6 +56,13 @@ namespace GS.Identity.Services
                 UserName = user.UserName
             };
 
+            var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            response.Roles = rolesList.ToList();
+            response.IsVerified = user.EmailConfirmed;
+
+            var refreshToken = GenerateRefreshToken();
+            response.RefreshToken = refreshToken.Token;
+
             return new Response<AuthenticationResponse>(response, $"User {response.UserName} Authenticated.");
         }
 
@@ -87,10 +95,28 @@ namespace GS.Identity.Services
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                expires: DateTime.UtcNow.AddDays(_jwtSettings.DurationInDays),
                 signingCredentials: signingCredentials);
             return jwtSecurityToken;
         }
 
+        private RefreshToken GenerateRefreshToken()
+        {
+            return new RefreshToken {
+                Token = RandomTokenString(),
+                ExpiresIn = DateTime.Now.AddDays(7),
+                Created = DateTime.Now
+            };
+        }
+
+        private string RandomTokenString()
+        {
+            using(var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
+            {
+                var randomBytes = new byte[64];
+                rngCryptoServiceProvider.GetBytes(randomBytes);
+                return BitConverter.ToString(randomBytes).Replace("-", "");
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace GS.Identity
             {
                 if (long.TryParse(value, out var exp))
                 {
-                    var time = TimeSpan.FromSeconds(exp);
+                    var time = TimeSpan.FromMinutes(exp);//.FromSeconds(exp);
                     return Epoch.Add(time);
                 }
             }

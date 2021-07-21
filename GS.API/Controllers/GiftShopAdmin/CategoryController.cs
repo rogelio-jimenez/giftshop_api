@@ -24,15 +24,15 @@ namespace GS.API.Controllers.GiftShopAdmin
     public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
 
-        public CategoryController(IMediator mediator, IMapper mapper)
+        public CategoryController(IMediator mediator)
         {
             _mediator = mediator;
-            _mapper = mapper;
         }
 
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(CategoryModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id)
         {
             return Ok(await _mediator.Send(new GetCategoryByIdQuery(id)));
@@ -46,6 +46,8 @@ namespace GS.API.Controllers.GiftShopAdmin
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Add(AddCategoryModel model)
         {
             model.UserId = User.Identity.GetUserId();
@@ -53,17 +55,21 @@ namespace GS.API.Controllers.GiftShopAdmin
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Edit(Guid id, UpdateCategoryModel model)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update(Guid id, UpdateCategoryModel model)
         {
-            model.Id = id;
             model.UpdatedById = User.Identity.GetUserId();
-            return Ok(await _mediator.Send(new UpdateCategoryCommand(model)));
+            return Ok(await _mediator.Send(new UpdateCategoryCommand(id, model)));
         }
 
         [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            return Ok(await _mediator.Send(new DeleteCategoryCommand(id)));
+            return Ok(await _mediator.Send(new DeleteCategoryCommand(id, User.Identity.GetUserId())));
         }
     }
 }

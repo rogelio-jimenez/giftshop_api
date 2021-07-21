@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GS.Application.Contracts.Persistence;
+using GS.Application.Exceptions;
 using GS.Application.Wrappers;
 using GS.Domain.Entities;
 using MediatR;
@@ -25,11 +26,24 @@ namespace GS.Application.Features.Admin.Categories.Commands.Edit
 
         public async Task<Response<Guid>> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _readOnlyRepository.FirstAsync<Category>(c => c.Id.Equals(request.Category.Id));
+            var entity = await _readOnlyRepository.FirstAsync<Category>(c => c.Id.Equals(request.Id));
 
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Category with id {request.Category.Id} not found");
+                throw new KeyNotFoundException($"Category with id {request.Id} not found.");
+            }
+
+            var entityWithSameValues = await _readOnlyRepository.FirstAsync<Category>(
+                c => !c.Id.ToString().ToLower().Equals(request.Id.ToString().ToLower())
+                && (
+                    c.Name.ToLower().Trim().Equals(request.Category.Name.ToLower().Trim())
+                    && c.Description.ToLower().Trim().Equals(request.Category.Description.ToLower().Trim())
+                )
+            );
+
+            if (entityWithSameValues != null)
+            {
+                throw new ApiException("The category with same name or description already exists.");
             }
 
             // ToDo: validate if an entity with same name and description exists....

@@ -15,5 +15,6 @@ namespace GS.Domain.Entities
         public DateTime DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
         public EnabledStatus Status { get; set; }
+        public long ByteSize { get; set; }
     }
 }

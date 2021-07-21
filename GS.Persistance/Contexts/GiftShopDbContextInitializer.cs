@@ -34,15 +34,26 @@ namespace GS.Persistance.Contexts
 
             CheckUserAdminId(userAdminId);
             await InitializeCategories(userAdminId);
+            await InitializeProducts(userAdminId);
         }
 
         private async Task InitializeCategories(Guid userAdminId)
         {
-            var categories = new SeedCategory(userAdminId, _dateTime);
+            var categories = new SeedCategory(userAdminId);
 
             if (!await _context.Categories.AnyAsync())
             {
                 await _context.Categories.AddRangeAsync(categories.Items);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task InitializeProducts(Guid userAdmin)
+        {
+            var products = new SeedProduct(userAdmin);
+            if(!await _context.Products.AnyAsync())
+            {
+                await _context.Products.AddRangeAsync(products.Items);
                 await _context.SaveChangesAsync();
             }
         }

@@ -10,6 +10,7 @@ namespace GS.Application.Features.Admin.Categories.Commands.Edit
         public UpdateCategoryCommandValidator()
         {
             RuleFor(c => c.Category).NotNull();
+            RuleFor(c => c.Id).NotNull().NotEmpty().NotEqual(Guid.Empty);
 
             var innerValidator = new UpdateCategoryModelValidator();
             RuleFor(c => c.Category)

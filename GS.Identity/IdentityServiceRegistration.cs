@@ -81,7 +81,7 @@ namespace GS.Identity
                     {
                         context.Response.StatusCode = 403;
                         context.Response.ContentType = "application/json";
-                        var result = JsonConvert.SerializeObject("403 Not authorized");
+                        var result = JsonConvert.SerializeObject("403 forbidden");
                         return context.Response.WriteAsync(result);
                     },
                 };

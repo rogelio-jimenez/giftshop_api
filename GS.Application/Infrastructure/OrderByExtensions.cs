@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
 
 namespace GS.Application.Infrastructure
 {
@@ -28,5 +27,19 @@ namespace GS.Application.Infrastructure
             sortCollection = new SortCollection<TSource>(sorts);
             return sortCollection.Apply(queryable);
         }
+
+        public static IQueryable<TSource> OrderByOrDefault<TSource, TProp>(this IQueryable<TSource> queryable, string sorts,
+            Expression<Func<TSource, TProp>> sortDefaultExpression)
+        {
+
+            var sort = new SortCollection<TSource>(sorts);
+
+            if (sort.Sorts == null || (sort.Sorts != null && sort.Sorts.Count == 0))
+            {
+                return queryable.OrderBy(sortDefaultExpression);
+            }
+            return sort.Apply(queryable);
+        }
+
     }
 }

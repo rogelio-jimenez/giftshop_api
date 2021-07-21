@@ -23,8 +23,10 @@ namespace GS.Application.Features.Admin.Categories.Commands.Delete
 
         public async Task<Response<Guid>> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            //var entity = await _repository.GetByIdAsync(request.Id);
-            var entity = await _readOnluRepository.FirstAsync<Category>(c => c.Id.Equals(request.Id));
+            var entity = await _readOnluRepository.FirstAsync<Category>(
+                c => c.Id.Equals(request.Id)
+                && c.Status != EnabledStatus.Disabled
+            );
 
             if (entity == null)
             {
@@ -32,6 +34,8 @@ namespace GS.Application.Features.Admin.Categories.Commands.Delete
             }
 
             entity.Status = EnabledStatus.Deleted;
+            entity.UpdatedById = request.UpdatedById;
+
             _repository.Update(entity);
             await _repository.SaveChangesAsync();
 

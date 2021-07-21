@@ -9,10 +9,10 @@ namespace GS.Application.Features.Admin.Categories.Commands
     {
         public UpdateCategoryModelValidator()
         {
-            RuleFor(c => c.Id)
-                .NotNull()
-                .NotEmpty().WithMessage("{PropertyName} cannot be empty.")
-                .NotEqual(Guid.Empty);
+            //RuleFor(c => c.Id)
+            //    .NotNull()
+            //    .NotEmpty().WithMessage("{PropertyName} cannot be empty.")
+            //    .NotEqual(Guid.Empty);
 
             RuleFor(c => c.Name)
                 .NotEmpty().WithMessage("{PropertyName} cannot be empty.")

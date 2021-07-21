@@ -42,7 +42,7 @@ namespace GS.Application.Features.Admin.Categories.Queries.GetPage
 
             var items = query
                 .ProjectTo<CategoryModel>(_mapper.ConfigurationProvider)
-                .OrderBy(!string.IsNullOrEmpty(request.OrderBy) ? request.OrderBy : "name");
+                .OrderByOrDefault(request.OrderBy, x => x.Name);
 
             var page = await _paginator.CreatePageAsync(_readOnlyRepository, query, items, 
                 request.Page, request.PageSize, cancellationToken);
