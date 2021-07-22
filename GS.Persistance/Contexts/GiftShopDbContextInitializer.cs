@@ -34,7 +34,9 @@ namespace GS.Persistance.Contexts
 
             CheckUserAdminId(userAdminId);
             await InitializeCategories(userAdminId);
-            await InitializeProducts(userAdminId);
+
+            //ToDo: check how to seed related data dynamically...
+            //await InitializeProducts(userAdminId);
         }
 
         private async Task InitializeCategories(Guid userAdminId)

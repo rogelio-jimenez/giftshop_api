@@ -17,16 +17,8 @@ namespace GS.Application.Features.Admin.Products.Commands
         public IEnumerable<IFormFile>? Images { get; set; }
 #nullable disable
 
-        //public ICollection<AddImageModel>? Images { get; set; }
-    }
-
-    public class AddImageModel : IStatus<EnabledStatus>
-    {
-        public string Name { get; set; }
-        public string Url { get; set; }
-        public Guid ProductId { get; set; }
-        public Guid UserId { get; set; }
-        public EnabledStatus Status { get; set; }
-        public long ByteSize { get; set; }
+        // #nullable enable
+        //         public ICollection<AddImageModel>? Images { get; set; }
+        // #nullable disable
     }
 }

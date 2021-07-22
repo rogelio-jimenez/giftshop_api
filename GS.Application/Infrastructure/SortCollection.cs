@@ -39,6 +39,7 @@ namespace GS.Application.Infrastructure
             }
         }
 
+#nullable enable
         private static ISortProperty<TSource>? Parse(string element)
         {
             var name = element.Trim();
@@ -49,7 +50,8 @@ namespace GS.Application.Infrastructure
             {
                 direction = ListSortDirection.Descending;
                 name = name.Substring(1);
-            }else if(element.EndsWith(" desc"))
+            }
+            else if (element.EndsWith(" desc"))
             {
                 direction = ListSortDirection.Descending;
                 name = name.Substring(0, name.IndexOf(" ")).Trim();
@@ -80,6 +82,7 @@ namespace GS.Application.Infrastructure
                 direction
             }) as ISortProperty<TSource>;
         }
+#nullable disable
 
         public IQueryable<TSource> Apply(IQueryable<TSource> queryable)
         {

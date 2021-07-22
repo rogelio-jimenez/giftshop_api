@@ -17,7 +17,10 @@ namespace GS.Domain.Entities
         public DateTime DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
         public EnabledStatus Status { get; set; }
-        public virtual ICollection<Image> Images { get; set; }
-        public virtual ICollection<ProductWishList> ProductWishLists { get; set; }
+
+#nullable enable
+        public virtual ICollection<Image>? Images { get; set; }
+#nullable disable
+        //public virtual ICollection<ProductWishList> ProductWishLists { get; set; }
     }
 }

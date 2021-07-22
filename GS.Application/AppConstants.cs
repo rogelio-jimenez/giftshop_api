@@ -13,8 +13,8 @@ namespace GS.Application
         public const int MaxLength = 4000;
         public const int StandardDecimalValueLength = 20;
 
-        public const string ImageFolderName = "assets";
-        public const string ProductImagesFolder = "product-images";
+        public const string AssetsFolderName = "assets";
+        public const string ProductImagesFolderName = "product-images";
 
         public const int QrCodeLength = 1024;
     }

@@ -1,4 +1,6 @@
-﻿using GS.Application.Features.Admin.Products.Commands;
+﻿using GS.Application;
+using GS.Application.Features.Admin.ProductImages.Commands.Add;
+using GS.Application.Features.Admin.Products.Commands;
 using GS.Application.Features.Admin.Products.Commands.Add;
 using GS.Application.Features.Admin.Products.Commands.Delete;
 using GS.Application.Features.Admin.Products.Commands.Update;
@@ -8,10 +10,12 @@ using GS.Identity;
 using GS.Identity.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,21 +27,32 @@ namespace GS.API.Controllers.GiftShopAdmin
     public class ProductController : ControllerBase
     {
         private readonly IMediator _mediator;
-
-        public ProductController(IMediator mediator)
+        private readonly IWebHostEnvironment _env;
+        public ProductController(IMediator mediator, IWebHostEnvironment env)
         {
             _mediator = mediator;
+            _env = env;
         }
 
+#nullable enable
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Add(AddProductModel model)
+        public async Task<IActionResult> Add([FromForm] AddProductModel model)
         {
-            model.UserId = User.Identity.GetUserId();
-            return Ok(await _mediator.Send(new AddProductCommand(model)));
-        }
+            var userId = User.Identity.GetUserId();
+            model.UserId = userId;
+            var newProduct = await _mediator.Send(new AddProductCommand(model));
 
+            if (newProduct.Data != null && (model.Images != null && model.Images.Count() > 0))
+            {
+                var path = Path.Combine(AppConstants.AssetsFolderName, AppConstants.ProductImagesFolderName);
+                await _mediator.Send(new AddImagesCommand(newProduct.Data, userId, model.Images, Path.Combine(_env.ContentRootPath, path)));
+            }
+
+            return Ok(newProduct);
+        }
+#nullable disable
 
         [HttpPut("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
