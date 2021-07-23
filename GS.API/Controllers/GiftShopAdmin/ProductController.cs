@@ -1,5 +1,6 @@
 ﻿using GS.Application;
 using GS.Application.Features.Admin.ProductImages.Commands.Add;
+using GS.Application.Features.Admin.ProductImages.Commands.DeleteAllByProduct;
 using GS.Application.Features.Admin.Products.Commands;
 using GS.Application.Features.Admin.Products.Commands.Add;
 using GS.Application.Features.Admin.Products.Commands.Delete;
@@ -28,13 +29,14 @@ namespace GS.API.Controllers.GiftShopAdmin
     {
         private readonly IMediator _mediator;
         private readonly IWebHostEnvironment _env;
+        private readonly string ImagesFolderFullName;
         public ProductController(IMediator mediator, IWebHostEnvironment env)
         {
             _mediator = mediator;
             _env = env;
+            ImagesFolderFullName = Path.Combine(_env.ContentRootPath, Path.Combine(AppConstants.AssetsFolderName, AppConstants.ProductImagesFolderName));
         }
 
-#nullable enable
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -46,13 +48,11 @@ namespace GS.API.Controllers.GiftShopAdmin
 
             if (newProduct.Data != null && (model.Images != null && model.Images.Count() > 0))
             {
-                var path = Path.Combine(AppConstants.AssetsFolderName, AppConstants.ProductImagesFolderName);
-                await _mediator.Send(new AddImagesCommand(newProduct.Data, userId, model.Images, Path.Combine(_env.ContentRootPath, path)));
+                await _mediator.Send(new AddImagesCommand(newProduct.Data, userId, model.Images, ImagesFolderFullName));
             }
 
             return Ok(newProduct);
         }
-#nullable disable
 
         [HttpPut("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -69,7 +69,13 @@ namespace GS.API.Controllers.GiftShopAdmin
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            return Ok(await _mediator.Send(new DeleteProductCommand(id)));
+            var userId = User.Identity.GetUserId();
+            var result = await _mediator.Send(new DeleteProductCommand(id, userId));
+            if (result.Succeeded)
+            {
+                await _mediator.Send(new DeleteAllByProductCommand(id, ImagesFolderFullName));
+            }
+            return Ok(result.Data);
         }
 
         [HttpGet("{id:guid}")]

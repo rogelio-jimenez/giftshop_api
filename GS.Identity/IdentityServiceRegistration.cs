@@ -19,12 +19,13 @@ namespace GS.Identity
     {
         public static IServiceCollection AddIdentityServicesRegistration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<GiftShopIdentityDbContext>(options => 
+            services.AddDbContext<GiftShopIdentityDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("Authentication"),
                 b => b.MigrationsAssembly(typeof(GiftShopIdentityDbContext).Assembly.FullName))
             );
 
-            services.AddIdentity<ApplicationUser, Role>(options => {
+            services.AddIdentity<ApplicationUser, Role>(options =>
+            {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = AuthConstants.MinPasswordLength;
@@ -32,6 +33,7 @@ namespace GS.Identity
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = true;
             })
+            .AddRoles<Role>()
             .AddEntityFrameworkStores<GiftShopIdentityDbContext>()
             .AddDefaultTokenProviders();
 

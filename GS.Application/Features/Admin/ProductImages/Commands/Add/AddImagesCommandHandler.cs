@@ -41,6 +41,7 @@ namespace GS.Application.Features.Admin.ProductImages.Commands.Add
                     throw new ApiException(ex.Message);
                 }
 
+                var product = await _readOnlyRepo.FirstAsync<Product>(p => p.Id.Equals(request.ProductId));
                 foreach (var img in request.Images)
                 {
                     var image = new AddImagesModel
@@ -53,12 +54,19 @@ namespace GS.Application.Features.Admin.ProductImages.Commands.Add
                         Url = request.ImageAssetsFolderPath
                     };
 
-                    using (var fStream = new FileStream(Path.Combine(productImagesFolder, image.Name), FileMode.Create))
+                    var newImg = _mapper.Map<Image>(image);
+                    var fullFileName = Path.Combine(productImagesFolder, image.Name);
+
+                    if (File.Exists(fullFileName))
                     {
-                        await img.CopyToAsync(fStream);
+                        throw new ApiException($"The image {image.Name} for the product {product.Name} already exits.");
                     }
 
-                    var newImg = _mapper.Map<Image>(image);
+                    using (var fStream = new FileStream(fullFileName, FileMode.Create))
+                    {
+                        await img.CopyToAsync(fStream, cancellationToken);
+                    }
+
                     _repository.Add(newImg);
                 }
                 await _repository.SaveChangesAsync(cancellationToken);

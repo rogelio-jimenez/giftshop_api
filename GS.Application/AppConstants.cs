@@ -17,5 +17,7 @@ namespace GS.Application
         public const string ProductImagesFolderName = "product-images";
 
         public const int QrCodeLength = 1024;
+
+        public const long ProductImageMaxLength = 5000000; //bytes -> 5 mb
     }
 }

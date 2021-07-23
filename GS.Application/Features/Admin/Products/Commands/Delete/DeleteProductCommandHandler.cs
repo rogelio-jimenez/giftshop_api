@@ -35,9 +35,10 @@ namespace GS.Application.Features.Admin.Products.Commands.Delete
             }
 
             entity.Status = EnabledStatus.Deleted;
+            entity.UpdatedById = request.UserId;
 
             _repository.Update(entity);
-            await _repository.SaveChangesAsync();
+            await _repository.SaveChangesAsync(cancellationToken);
 
             return new Response<Guid>(entity.Id);
         }
