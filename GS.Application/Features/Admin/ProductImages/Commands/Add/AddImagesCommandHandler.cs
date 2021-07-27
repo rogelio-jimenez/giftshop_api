@@ -47,7 +47,7 @@ namespace GS.Application.Features.Admin.ProductImages.Commands.Add
                     var image = new AddImagesModel
                     {
                         Name = img.FileName,
-                        LabelName = img.Name,
+                        LabelName = img.FileName.Split(".")[0],
                         ByteSize = img.Length,
                         UserId = request.UserId,
                         ProductId = request.ProductId,

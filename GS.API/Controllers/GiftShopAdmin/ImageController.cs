@@ -6,6 +6,7 @@ using GS.Application;
 using GS.Application.Features.Admin.ProductImages.Commands.Add;
 using GS.Application.Features.Admin.ProductImages.Commands.Delete;
 using GS.Application.Features.Admin.ProductImages.Commands.DeleteAllByProduct;
+using GS.Application.Features.Admin.ProductImages.Queries.GetByProductId;
 using GS.Identity;
 using GS.Identity.Models;
 using MediatR;
@@ -29,7 +30,7 @@ namespace GS.API.Controllers.GiftShopAdmin
         {
             _mediator = mediator;
             _env = env;
-            ImagesFolderFullName = Path.Combine(_env.ContentRootPath, Path.Combine(AppConstants.AssetsFolderName, AppConstants.ProductImagesFolderName));
+            ImagesFolderFullName = Path.Combine(_env.WebRootPath, Path.Combine(AppConstants.AssetsFolderName, AppConstants.ProductImagesFolderName));
         }
 
         [HttpPost("{productId:guid}")]
@@ -54,6 +55,13 @@ namespace GS.API.Controllers.GiftShopAdmin
         public async Task<IActionResult> RemoveAllByProduct(Guid productId)
         {
             return Ok(await _mediator.Send(new DeleteAllByProductCommand(productId, ImagesFolderFullName)));
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllByProduct([FromQuery] GetImagesPageQuery query)
+        {
+            return Ok(await _mediator.Send(query));
         }
     }
 }

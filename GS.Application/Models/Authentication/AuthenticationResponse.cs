@@ -12,8 +12,11 @@ namespace GS.Application.Models.Authentication
         public string Token { get; set; }
         public List<string> Roles { get; set; }
         public bool IsVerified { get; set; }
-
-        [JsonIgnore]
         public string RefreshToken { get; set; }
+
+        // [JsonIgnore]
+        // public string RefreshTokenSecret { get; set; }
+        // [JsonIgnore]
+        // public string RefreshTokenExpirationInDays { get; set; }
     }
 }

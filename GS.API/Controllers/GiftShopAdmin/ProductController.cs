@@ -34,7 +34,7 @@ namespace GS.API.Controllers.GiftShopAdmin
         {
             _mediator = mediator;
             _env = env;
-            ImagesFolderFullName = Path.Combine(_env.ContentRootPath, Path.Combine(AppConstants.AssetsFolderName, AppConstants.ProductImagesFolderName));
+            ImagesFolderFullName = Path.Combine(_env.WebRootPath, Path.Combine(AppConstants.AssetsFolderName, AppConstants.ProductImagesFolderName));
         }
 
         [HttpPost]

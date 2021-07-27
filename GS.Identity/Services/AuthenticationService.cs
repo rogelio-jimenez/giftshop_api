@@ -4,14 +4,11 @@ using GS.Application.Wrappers;
 using GS.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GS.Identity.Services
@@ -21,13 +18,17 @@ namespace GS.Identity.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JwtSettings _jwtSettings;
+        private readonly TokenGenerator _tokenGenerator;
+        private readonly RefreshTokenGenerator _refreshTokenGenerator;
 
-        public AuthenticationService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, 
-            IOptions<JwtSettings> jwtSettings)
+        public AuthenticationService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
+            IOptions<JwtSettings> jwtSettings, TokenGenerator tokenGenerator, RefreshTokenGenerator refreshTokenGenerator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtSettings = jwtSettings.Value;
+            _tokenGenerator = tokenGenerator;
+            _refreshTokenGenerator = refreshTokenGenerator;
         }
 
         public async Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request)
@@ -46,27 +47,28 @@ namespace GS.Identity.Services
                 throw new Exception($"Credentials for '{request.Email} aren't valid'.");
             }
 
-            JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
-
             AuthenticationResponse response = new AuthenticationResponse
             {
                 Id = user.Id,
-                Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                Token = await GenerateToken(user),
                 Email = user.Email,
-                UserName = user.UserName
+                UserName = user.UserName,
+                RefreshToken = _refreshTokenGenerator.GenerateToken()
             };
 
             var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
             response.Roles = rolesList.ToList();
             response.IsVerified = user.EmailConfirmed;
 
-            var refreshToken = GenerateRefreshToken();
-            response.RefreshToken = refreshToken.Token;
-
             return new Response<AuthenticationResponse>(response, $"User {response.UserName} Authenticated.");
         }
 
-        private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
+        public async Task<Response<AuthenticationResponse>> RefreshTokenAsync(AuthenticationRequest request)
+        {
+
+        }
+
+        private async Task<string> GenerateToken(ApplicationUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
@@ -88,35 +90,13 @@ namespace GS.Identity.Services
             .Union(userClaims)
             .Union(roleClaims);
 
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-
-            var jwtSecurityToken = new JwtSecurityToken(
-                issuer: _jwtSettings.Issuer,
-                audience: _jwtSettings.Audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(_jwtSettings.DurationInDays),
-                signingCredentials: signingCredentials);
-            return jwtSecurityToken;
+            return _tokenGenerator.GenerateToken(
+                _jwtSettings.Key,
+                _jwtSettings.Issuer,
+                _jwtSettings.Audience,
+                _jwtSettings.DurationInMins,
+                claims);
         }
 
-        private RefreshToken GenerateRefreshToken()
-        {
-            return new RefreshToken {
-                Token = RandomTokenString(),
-                ExpiresIn = DateTime.Now.AddDays(7),
-                Created = DateTime.Now
-            };
-        }
-
-        private string RandomTokenString()
-        {
-            using(var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
-            {
-                var randomBytes = new byte[64];
-                rngCryptoServiceProvider.GetBytes(randomBytes);
-                return BitConverter.ToString(randomBytes).Replace("-", "");
-            }
-        }
     }
 }

@@ -11,16 +11,20 @@ using Microsoft.OpenApi.Models;
 using GS.Application;
 using Microsoft.Net.Http.Headers;
 using GS.API.Extensions;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace GS.API
 {
     public class Startup
     {
         private string coorsName = "Open";
+        private readonly IWebHostEnvironment _env;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -37,7 +41,8 @@ namespace GS.API
 
             services.AddControllers();
 
-            services.AddCors(opts => {
+            services.AddCors(opts =>
+            {
                 opts.AddPolicy(coorsName, builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             });
         }
@@ -57,6 +62,18 @@ namespace GS.API
                 .AllowCredentials()
                 .WithOrigins(Configuration["ClientDomains"])
             );
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), $@"{_env.WebRootPath}\{AppConstants.AssetsFolderName}")),
+                RequestPath = $"/{AppConstants.ProductImagesFolderName}"
+            });
+
+            // app.UseStaticFiles(new StaticFileOptions
+            // {
+            //     FileProvider = new PhysicalFileProvider(Path.Combine(Path.Combine(_env.ContentRootPath, _env.WebRootPath), AppConstants.AssetsFolderName)),
+            //     RequestPath = AppConstants.ProductImagesFolderName
+            // });
 
             app.UseHttpsRedirection();
 
@@ -84,7 +101,8 @@ namespace GS.API
         {
             services.AddSwaggerGen(sg =>
             {
-                sg.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+                sg.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
                     Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
                       Enter 'Bearer' [space] and then your token in the text input below.
                       \r\n\r\nExample: 'Bearer 12345abcdef'",

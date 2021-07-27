@@ -41,6 +41,10 @@ namespace GS.Identity
             services.AddScoped<GiftShopIdentityInitializer>();
 
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+
+            services.AddSingleton<TokenGenerator>();
+            services.AddSingleton<RefreshTokenGenerator>();
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
