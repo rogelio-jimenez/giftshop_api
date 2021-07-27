@@ -12,9 +12,9 @@ namespace GS.Application.Infrastructure
     public class DefaultPagination : IPaginator
     {
         public async Task<PaginatedResponse<TItem>> CreatePageAsync<TCount, TItem>(
-            IRepositoryBase repository, 
-            IQueryable<TCount> countQuery, 
-            IQueryable<TItem> itemsQuery, 
+            IRepositoryBase repository,
+            IQueryable<TCount> countQuery,
+            IQueryable<TItem> itemsQuery,
             int page, int pageSize, CancellationToken cancellationToken = default)
             where TCount : class
             where TItem : class
@@ -34,7 +34,7 @@ namespace GS.Application.Infrastructure
                 throw new ArgumentNullException(nameof(itemsQuery));
             }
 
-            Paginator.ValidatePaging(page, pageSize);
+            ValidatePaging(page, pageSize);
 
             var count = await repository.CountAsync(countQuery, cancellationToken);
 
@@ -43,6 +43,34 @@ namespace GS.Application.Infrastructure
                 .Take(pageSize), cancellationToken);
 
             return PaginatedResponse.From(items, count, page, pageSize);
+        }
+
+        public async Task<AllItemsResult<TItem>> CreateAllAsync<TItem>(IRepositoryBase repository, IQueryable<TItem> itemsQuery, CancellationToken cancellationToken = default) where TItem : class
+        {
+            if (repository == null)
+            {
+                throw new ArgumentNullException(nameof(repository));
+            }
+            if (itemsQuery == null)
+            {
+                throw new ArgumentNullException(nameof(itemsQuery));
+            }
+
+            var items = await repository.ListAsync(itemsQuery, cancellationToken);
+            return AllItemsResult.From(items);
+        }
+
+        public void ValidatePaging(int page, int pageSize)
+        {
+            if (page < PaginatedQueryRequest.MinPage)
+            {
+                throw new ArgumentOutOfRangeException(nameof(page));
+            }
+
+            if (pageSize < PaginatedQueryRequest.MinPageSize || pageSize > PaginatedQueryRequest.MaxPageSize)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize));
+            }
         }
     }
 }

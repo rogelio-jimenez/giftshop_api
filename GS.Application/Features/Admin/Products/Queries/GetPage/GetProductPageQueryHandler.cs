@@ -44,7 +44,7 @@ namespace GS.Application.Features.Admin.Products.Queries.GetPage
             var items = query.ProjectTo<ProductListItemModel>(_mapper.ConfigurationProvider)
                 .OrderByOrDefault(request.OrderBy, x => x.Name);
 
-            var page = await _paginator.CreatePageAsync(_readOnlyRepository, query, items, request.Page, 
+            var page = await _paginator.CreatePageAsync(_readOnlyRepository, query, items, request.Page,
                 request.PageSize, cancellationToken);
 
             return page;

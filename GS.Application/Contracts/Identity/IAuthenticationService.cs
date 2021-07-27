@@ -7,6 +7,7 @@ namespace GS.Application.Contracts.Identity
     public interface IAuthenticationService
     {
         Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request);
+        Task<Response<AuthenticationResponse>> RefreshTokenAsync(AuthenticationRequest request);
         //Task<RegistrationResponse> RegisterAsync(RegistrationRequest request);
     }
 }

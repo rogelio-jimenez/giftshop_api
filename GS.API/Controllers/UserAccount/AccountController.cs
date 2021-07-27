@@ -32,5 +32,13 @@ namespace GS.API.Controllers.UserAccount
             return Ok(await _mediator.Send(new AuthenticateCommand { Email = model.Email, Password = model.Password }));
         }
 
+        // [HttpPost("refreshToken")]
+        // [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
+        // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        // public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest refreshRequest)
+        // {
+
+        // }
+
     }
 }

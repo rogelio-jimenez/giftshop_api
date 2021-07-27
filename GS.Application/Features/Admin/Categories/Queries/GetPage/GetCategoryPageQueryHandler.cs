@@ -36,7 +36,7 @@ namespace GS.Application.Features.Admin.Categories.Queries.GetPage
             {
                 var term = request.SearchTerm.Trim().ToLower();
                 query = query.Where(
-                    c => c.Name.Trim().ToLower().Contains(term) || 
+                    c => c.Name.Trim().ToLower().Contains(term) ||
                     c.Description.Trim().ToLower().Contains(term));
             }
 
@@ -44,10 +44,10 @@ namespace GS.Application.Features.Admin.Categories.Queries.GetPage
                 .ProjectTo<CategoryModel>(_mapper.ConfigurationProvider)
                 .OrderByOrDefault(request.OrderBy, x => x.Name);
 
-            var page = await _paginator.CreatePageAsync(_readOnlyRepository, query, items, 
+            var page = await _paginator.CreatePageAsync(_readOnlyRepository, query, items,
                 request.Page, request.PageSize, cancellationToken);
 
-            return page;    
+            return page;
         }
     }
 }

@@ -9,11 +9,17 @@ namespace GS.Application.Infrastructure
     public interface IPaginator
     {
         Task<PaginatedResponse<TItem>> CreatePageAsync<TCount, TItem>(
-            IRepositoryBase repository, 
+            IRepositoryBase repository,
             IQueryable<TCount> countQuery,
             IQueryable<TItem> itemsQuery,
-            int page, 
-            int pageSize, 
+            int page,
+            int pageSize,
             CancellationToken cancellationToken = default) where TCount : class where TItem : class;
+
+        Task<AllItemsResult<TItem>> CreateAllAsync<TItem>(
+            IRepositoryBase repository,
+            IQueryable<TItem> itemsQuery,
+            CancellationToken cancellationToken = default)
+        where TItem : class;
     }
 }

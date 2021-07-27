@@ -3,6 +3,7 @@ using GS.Application.Features.Admin.Categories.Commands;
 using GS.Application.Features.Admin.Categories.Commands.Add;
 using GS.Application.Features.Admin.Categories.Commands.Delete;
 using GS.Application.Features.Admin.Categories.Commands.Edit;
+using GS.Application.Features.Admin.Categories.Queries.GetAll;
 using GS.Application.Features.Admin.Categories.Queries.GetById;
 using GS.Application.Features.Admin.Categories.Queries.GetPage;
 using GS.Application.Models.Category;
@@ -41,6 +42,13 @@ namespace GS.API.Controllers.GiftShopAdmin
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedResponse<CategoryModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPage([FromQuery] GetCategoryPageQuery query)
+        {
+            return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("getAll")]
+        [ProducesResponseType(typeof(AllItemsResult<CategoryModel>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllCategoriesQuery query)
         {
             return Ok(await _mediator.Send(query));
         }
