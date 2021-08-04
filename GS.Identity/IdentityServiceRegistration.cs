@@ -1,5 +1,6 @@
 ﻿using GS.Application.Contracts.Identity;
 using GS.Application.Models.Authentication;
+using GS.Application.Wrappers;
 using GS.Identity.Models;
 using GS.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -60,7 +61,7 @@ namespace GS.Identity
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
+                    ClockSkew = TimeSpan.Zero, // It forces tokens to expire exactly at token expiration time
                     ValidIssuer = configuration["JwtSettings:Issuer"],
                     ValidAudience = configuration["JwtSettings:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]))
@@ -77,17 +78,22 @@ namespace GS.Identity
                     },
                     OnChallenge = context =>
                     {
-                        context.HandleResponse();
-                        context.Response.StatusCode = 401;
-                        context.Response.ContentType = "application/json";
-                        var result = JsonConvert.SerializeObject("401 Not authorized");
-                        return context.Response.WriteAsync(result);
+                        if (!context.Response.HasStarted) {
+                            context.HandleResponse();
+                            context.Response.StatusCode = 401;
+                            context.Response.ContentType = "application/json";
+                            var result = JsonConvert.SerializeObject("401 Not authorized");
+                            return context.Response.WriteAsync(result);
+                        } else {
+                            var result = JsonConvert.SerializeObject(new Response<string>("Token Expired"));
+                            return context.Response.WriteAsync(result);
+                        }
                     },
                     OnForbidden = context =>
                     {
                         context.Response.StatusCode = 403;
                         context.Response.ContentType = "application/json";
-                        var result = JsonConvert.SerializeObject("403 forbidden");
+                        var result = JsonConvert.SerializeObject(new Response<string>("403 forbidden"));
                         return context.Response.WriteAsync(result);
                     },
                 };

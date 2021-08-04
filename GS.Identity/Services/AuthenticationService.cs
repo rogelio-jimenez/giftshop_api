@@ -53,9 +53,10 @@ namespace GS.Identity.Services
                 Token = await GenerateToken(user),
                 Email = user.Email,
                 UserName = user.UserName,
-                RefreshToken = _refreshTokenGenerator.GenerateToken()
+                RefreshToken = _refreshTokenGenerator.GenerateToken(),
+                ExpiresIn = _tokenGenerator.JwtSecurityToken.ValidTo
             };
-
+            
             var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
             response.Roles = rolesList.ToList();
             response.IsVerified = user.EmailConfirmed;
@@ -63,9 +64,9 @@ namespace GS.Identity.Services
             return new Response<AuthenticationResponse>(response, $"User {response.UserName} Authenticated.");
         }
 
-        public async Task<Response<AuthenticationResponse>> RefreshTokenAsync(AuthenticationRequest request)
+        public Task<Response<AuthenticationResponse>> RefreshTokenAsync(AuthenticationRequest request)
         {
-
+            throw new NotImplementedException();
         }
 
         private async Task<string> GenerateToken(ApplicationUser user)

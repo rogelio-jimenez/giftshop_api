@@ -2,6 +2,7 @@
 using GS.Application.Contracts.Identity;
 using GS.Application.Features.Authentication.Commands;
 using GS.Application.Models.Authentication;
+using GS.Identity;
 using GS.Identity.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +30,8 @@ namespace GS.API.Controllers.UserAccount
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationRequest model)
         {
-            return Ok(await _mediator.Send(new AuthenticateCommand { Email = model.Email, Password = model.Password }));
+            var result = await _mediator.Send(new AuthenticateCommand { Email = model.Email, Password = model.Password });
+            return Ok(result);
         }
 
         // [HttpPost("refreshToken")]

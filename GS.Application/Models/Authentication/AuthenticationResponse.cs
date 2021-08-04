@@ -13,6 +13,7 @@ namespace GS.Application.Models.Authentication
         public List<string> Roles { get; set; }
         public bool IsVerified { get; set; }
         public string RefreshToken { get; set; }
+        public DateTime? ExpiresIn { get; set; }
 
         // [JsonIgnore]
         // public string RefreshTokenSecret { get; set; }

@@ -13,6 +13,8 @@ using Microsoft.Net.Http.Headers;
 using GS.API.Extensions;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace GS.API
 {
@@ -60,20 +62,15 @@ namespace GS.API
                 .WithExposedHeaders(HeaderNames.ContentDisposition)
                 .AllowAnyMethod()
                 .AllowCredentials()
-                .WithOrigins(Configuration["ClientDomains"])
+                .WithOrigins(Configuration["ClientDomains"].Split(',', StringSplitOptions.RemoveEmptyEntries))
             );
 
+            var physicalFileProvider = Path.Combine(Directory.GetCurrentDirectory(), $@"{_env.WebRootPath}/{AppConstants.AssetsFolderName}");
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), $@"{_env.WebRootPath}\{AppConstants.AssetsFolderName}")),
-                RequestPath = $"/{AppConstants.ProductImagesFolderName}"
+                FileProvider = new PhysicalFileProvider(physicalFileProvider),
+                RequestPath = new PathString($"/{AppConstants.AssetsFolderName}")
             });
-
-            // app.UseStaticFiles(new StaticFileOptions
-            // {
-            //     FileProvider = new PhysicalFileProvider(Path.Combine(Path.Combine(_env.ContentRootPath, _env.WebRootPath), AppConstants.AssetsFolderName)),
-            //     RequestPath = AppConstants.ProductImagesFolderName
-            // });
 
             app.UseHttpsRedirection();
 
@@ -84,7 +81,6 @@ namespace GS.API
                 ui.SwaggerEndpoint("/swagger/v1/swagger.json", "GiftShop API");
             });
 
-            app.UseCors(coorsName);
             app.UseAuthentication();
             app.UseAuthorization();
 
